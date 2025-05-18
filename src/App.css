@@ -1,25 +1,14 @@
 /* Prevent body overflow and scroll bounce */
-html, body {
+html,
+body {
+  overscroll-behavior-y: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #fff;
-  height: 100%;
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
-  font-family: sans-serif;
 }
 
-/* Root container */
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-  background: #fff;
-  min-height: 100vh;
-  box-sizing: border-box;
-  overscroll-behavior-y: none;
-}
 
 /* Logo styles */
 .logo {

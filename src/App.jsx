@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import ShiftForm from './features/ShiftManagement/components/ShiftForm.jsx';
 import { ConfigProvider } from 'antd';
+import './App.css';
 
 function App() {
   return (
