@@ -7,14 +7,12 @@ import {
   Select,
   InputNumber,
   Button,
-  message,
   Space,
   Form,
-  Modal,
 } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 
@@ -23,11 +21,11 @@ const ColorInput = (props) => (
 );
 
 const ShiftForm = () => {
+  const { t } = useTranslation();
   const {
     control,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -44,7 +42,6 @@ const ShiftForm = () => {
       maxRepetition: 1,
     },
   });
-  const navigate = useNavigate();
 
   // Watch start and end time for duration calculation
   const startTime = watch('startTime');
@@ -68,17 +65,17 @@ const ShiftForm = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fff', padding: 32 }}>
+    <div style={{ minHeight: '100vh', padding: 32 }}>
       <Form
         layout='vertical'
         style={{ maxWidth: 800, margin: '0 auto' }}
         onFinish={handleSubmit(onSubmit)}
         component='form'
       >
-        <h2 style={{ marginBottom: 24, color: 'black' }}>Create New Shift</h2>
+        <h2 style={{ marginBottom: 24 }}>{t('shiftForm.shiftForm')}</h2>
 
         <Form.Item
-          label='Name'
+          label={t('shiftForm.name')}
           validateStatus={errors.name ? 'error' : ''}
           help={errors.name?.message}
         >
@@ -86,20 +83,20 @@ const ShiftForm = () => {
             name='name'
             control={control}
             rules={{
-              required: 'Please enter shift name',
+              required: t('shiftFormValidation.nameRequired'),
               minLength: {
                 value: 1,
-                message: 'Name must be at least 1 character',
+                message: t('shiftFormValidation.nameMinLength'),
               },
             }}
             render={({ field }) => (
-              <Input {...field} placeholder='Enter shift name' />
+              <Input {...field} placeholder={t('shiftForm.namePlaceholder')} />
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label='Display Name'
+          label={t('shiftForm.displayName')}
           validateStatus={errors.displayName ? 'error' : ''}
           help={errors.displayName?.message}
         >
@@ -107,16 +104,16 @@ const ShiftForm = () => {
             name='displayName'
             control={control}
             rules={{
-              required: 'Please enter display name',
+              required: t('shiftFormValidation.displayNameRequired'),
               maxLength: {
                 value: 5,
-                message: 'Display name must be at most 5 characters',
+                message: t('shiftFormValidation.displayNameMaxLength'),
               },
             }}
             render={({ field }) => (
               <Input
                 {...field}
-                placeholder='Enter display name'
+                placeholder={t('shiftForm.displayNamePlaceholder')}
                 maxLength={5}
               />
             )}
@@ -125,14 +122,14 @@ const ShiftForm = () => {
 
         <Space align='baseline' style={{ marginBottom: 16 }}>
           <Form.Item
-            label='Start Time'
+            label={t('shiftForm.startTime')}
             validateStatus={errors.startTime ? 'error' : ''}
             help={errors.startTime?.message}
           >
             <Controller
               name='startTime'
               control={control}
-              rules={{ required: 'Please select start time' }}
+              rules={{ required: t('shiftFormValidation.startTimeRequired') }}
               render={({ field }) => (
                 <TimePicker
                   {...field}
@@ -141,27 +138,27 @@ const ShiftForm = () => {
                   onChange={(value) =>
                     field.onChange(value ? value.format('hh:mm A') : null)
                   }
-                  placeholder='Start Time'
+                  placeholder={t('shiftForm.startTimePlaceholder')}
                 />
               )}
             />
           </Form.Item>
           <Form.Item
-            label='End Time'
+            label={t('shiftForm.endTime')}
             validateStatus={errors.endTime ? 'error' : ''}
             help={errors.endTime?.message}
           >
             <Controller
               name='endTime'
               control={control}
-              rules={{ required: 'Please select end time' }}
+              rules={{ required: t('shiftFormValidation.endTimeRequired') }}
               render={({ field }) => (
                 <TimePicker
                   {...field}
                   format='hh:mm A'
                   onChange={(value) => field.onChange(value)}
                   value={field.value}
-                  placeholder='End Time'
+                  placeholder={t('shiftForm.endTimePlaceholder')}
                 />
               )}
             />
@@ -170,39 +167,41 @@ const ShiftForm = () => {
 
         {shiftDuration && (
           <div style={{ marginBottom: 24 }}>
-            Total Shift Duration: {shiftDuration}
+            {t('shiftForm.totalShiftDuration')}: {shiftDuration}
           </div>
         )}
 
         <Space style={{ marginBottom: 16 }}>
           <Form.Item
-            label='Text Color'
+            label={t('shiftForm.textColor')}
             validateStatus={errors.textColor ? 'error' : ''}
             help={errors.textColor?.message}
           >
             <Controller
               name='textColor'
               control={control}
-              rules={{ required: 'Please select text color' }}
+              rules={{ required: t('shiftFormValidation.textColorRequired') }}
               render={({ field }) => <ColorInput {...field} />}
             />
           </Form.Item>
           <Form.Item
-            label='Background Color'
+            label={t('shiftForm.backgroundColor')}
             validateStatus={errors.backgroundColor ? 'error' : ''}
             help={errors.backgroundColor?.message}
           >
             <Controller
               name='backgroundColor'
               control={control}
-              rules={{ required: 'Please select background color' }}
+              rules={{
+                required: t('shiftFormValidation.backgroundColorRequired'),
+              }}
               render={({ field }) => <ColorInput {...field} />}
             />
           </Form.Item>
         </Space>
 
         <Form.Item
-          label='Active'
+          label={t('shiftForm.active')}
           validateStatus={errors.isActive ? 'error' : ''}
           help={errors.isActive?.message}
         >
@@ -213,8 +212,8 @@ const ShiftForm = () => {
               <Switch
                 {...field}
                 checked={field.value}
-                checkedChildren='Active'
-                unCheckedChildren='Inactive'
+                checkedChildren={t('shiftForm.active')}
+                unCheckedChildren={t('shiftForm.inactive')}
                 onChange={field.onChange}
               />
             )}
@@ -222,27 +221,27 @@ const ShiftForm = () => {
         </Form.Item>
 
         <Form.Item
-          label='Shift Type'
+          label={t('shiftForm.shiftType')}
           validateStatus={errors.shiftType ? 'error' : ''}
           help={errors.shiftType?.message}
         >
           <Controller
             name='shiftType'
             control={control}
-            rules={{ required: 'Please select shift type' }}
+            rules={{ required: t('shiftFormValidation.shiftTypeRequired') }}
             render={({ field }) => (
               <Select {...field} style={{ width: 200 }}>
-                <Option value='Working'>Working</Option>
-                <Option value='Off'>Off</Option>
-                <Option value='OnCall'>On Call</Option>
+                <Option value='Working'>{t('shiftForm.working')}</Option>
+                <Option value='Off'>{t('shiftForm.off')}</Option>
+                <Option value='OnCall'>{t('shiftForm.onCall')}</Option>
               </Select>
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label='Min Rest Time (default: 0)'
-          extra='Accepted: 0 - 99'
+          label={t('shiftForm.minRestTime')}
+          extra={t('shiftForm.minRestTimeExtra')}
           validateStatus={errors.minRestTime ? 'error' : ''}
           help={errors.minRestTime?.message}
         >
@@ -250,24 +249,30 @@ const ShiftForm = () => {
             name='minRestTime'
             control={control}
             rules={{
-              required: 'Please enter minimum rest time',
-              min: { value: 0, message: 'Must be between 0 and 99' },
-              max: { value: 99, message: 'Must be between 0 and 99' },
+              required: t('shiftFormValidation.minRestTimeRequired'),
+              min: {
+                value: 0,
+                message: t('shiftFormValidation.minRestTimeRange'),
+              },
+              max: {
+                value: 99,
+                message: t('shiftFormValidation.minRestTimeRange'),
+              },
             }}
             render={({ field }) => (
               <InputNumber
                 {...field}
                 min={0}
                 max={99}
-                placeholder='Min Rest Time (default: 0)'
+                placeholder={t('shiftForm.minRestTimePlaceholder')}
               />
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label='Break Time (default: 0)'
-          extra='Accepted: 0 - 99'
+          label={t('shiftForm.breakTime')}
+          extra={t('shiftForm.breakTimeExtra')}
           validateStatus={errors.breakTime ? 'error' : ''}
           help={errors.breakTime?.message}
         >
@@ -275,24 +280,30 @@ const ShiftForm = () => {
             name='breakTime'
             control={control}
             rules={{
-              required: 'Please enter break time',
-              min: { value: 0, message: 'Must be between 0 and 99' },
-              max: { value: 99, message: 'Must be between 0 and 99' },
+              required: t('shiftFormValidation.breakTimeRequired'),
+              min: {
+                value: 0,
+                message: t('shiftFormValidation.breakTimeRange'),
+              },
+              max: {
+                value: 99,
+                message: t('shiftFormValidation.breakTimeRange'),
+              },
             }}
             render={({ field }) => (
               <InputNumber
                 {...field}
                 min={0}
                 max={99}
-                placeholder='Break Time (default: 0)'
+                placeholder={t('shiftForm.breakTimePlaceholder')}
               />
             )}
           />
         </Form.Item>
 
         <Form.Item
-          label='Max Allowed Repetition (default: 1)'
-          extra='Accepted: 1 or more'
+          label={t('shiftForm.maxRepetition')}
+          extra={t('shiftForm.maxRepetitionExtra')}
           validateStatus={errors.maxRepetition ? 'error' : ''}
           help={errors.maxRepetition?.message}
         >
@@ -300,14 +311,17 @@ const ShiftForm = () => {
             name='maxRepetition'
             control={control}
             rules={{
-              required: 'Please enter maximum repetition',
-              min: { value: 1, message: 'Must be at least 1' },
+              required: t('shiftFormValidation.maxRepetitionRequired'),
+              min: {
+                value: 1,
+                message: t('shiftFormValidation.maxRepetitionMin'),
+              },
             }}
             render={({ field }) => (
               <InputNumber
                 {...field}
                 min={1}
-                placeholder='Max Allowed Repetition (default: 1)'
+                placeholder={t('shiftForm.maxRepetitionPlaceholder')}
               />
             )}
           />
@@ -319,7 +333,7 @@ const ShiftForm = () => {
           icon={<SaveOutlined />}
           loading={isSubmitting}
         >
-          Save Shift
+          {t('shiftForm.saveShift')}
         </Button>
       </Form>
     </div>
