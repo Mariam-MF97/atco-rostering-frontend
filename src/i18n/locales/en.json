@@ -84,5 +84,15 @@
   "shifts": {
     "listComingSoon": "Shifts List (Coming Soon)",
     "createNewShift": "Create Shift"
+  },
+  "sidebar": {
+    "planning": "Planning",
+    "shifts": "Shifts",
+    "shiftsPatterns": "Shift Patterns",
+    "workingRules": "Working Rules",
+    "mprCoverage": "MPR & Coverage",
+    "rostering": "Rostering",
+    "resources": "Resources",
+    "configurations": "Configurations"
   }
 }

@@ -4,79 +4,71 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { ConfigProvider, theme as antdTheme, Typography, Button } from 'antd';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import MainLayout from './layouts/MainLayout.jsx';
 import Login from './features/Auth/pages/Login.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import Shifts from './features/ShiftManagement/pages/Shifts.jsx';
-import CreateShift from './features/ShiftManagement/pages/Create.jsx';
+import ListShifts from './features/planning/shifts/pages/ListShifts.jsx';
+import CreateShift from './features/planning/shifts/pages/CreateShift.jsx';
+import ViewShift from './features/planning/shifts/pages/ViewShift.jsx';
+import EditShift from './features/planning/shifts/pages/EditShift.jsx';
 import useThemeStore from './store/themeStore.js';
+import { lightTheme, darkTheme } from './theme';
 import './App.css';
 
 function App() {
   const { isDarkMode } = useThemeStore();
+  const theme = isDarkMode ? darkTheme : lightTheme;
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: isDarkMode
-          ? antdTheme.darkAlgorithm
-          : antdTheme.defaultAlgorithm,
-        token: {
-          colorPrimary: '#646cff',
-          borderRadius: 8,
-        },
-        components: {
-          Layout: {
-            bodyBg: isDarkMode ? '#242525' : '#f0f2f5',
-            headerBg: isDarkMode ? '#1f1f1f' : '#fff',
-            siderBg: '#001529',
-          },
-          Menu: {
-            darkItemBg: '#001529',
-            darkItemSelectedBg: '#1890ff',
-          },
-        },
-      }}
-    >
-      <Router>
-        <Routes>
-          {/* Public routes */}
-          <Route path='/login' element={<Login />} />
+    <LocalizationProvider dateAdapter={AdapterMoment}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Routes>
+            {/* Public routes */}
+            <Route path='/login' element={<Login />} />
 
-          {/* Protected routes */}
-          <Route
-            path='/'
-            element={
-              <ProtectedRoute>
-                <MainLayout />
-              </ProtectedRoute>
-            }
-          >
+            {/* Protected routes */}
             <Route
-              index
+              path='/'
               element={
-                <div
-                  style={{
-                    textAlign: 'center',
-                    marginTop: 64,
-                    fontSize: 24,
-                  }}
-                >
-                  Dashboard is empty
-                </div>
+                <ProtectedRoute>
+                  <MainLayout />
+                </ProtectedRoute>
               }
-            />
-            <Route path='shifts' element={<Shifts />} />
-            <Route path='shifts/create' element={<CreateShift />} />
-            <Route path='profile' element={<div>Profile (Coming Soon)</div>} />
-          </Route>
+            >
+              <Route
+                element={
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      marginTop: 64,
+                      fontSize: 24,
+                    }}
+                  >
+                    Dashboard is empty
+                  </div>
+                }
+              />
+              <Route path='shifts' element={<ListShifts />} />
+              <Route path='shifts/create' element={<CreateShift />} />
+              <Route path='shifts/:id' element={<ViewShift />} />
+              <Route path='shifts/:id/edit' element={<EditShift />} />
+              <Route
+                path='profile'
+                element={<div>Profile (Coming Soon)</div>}
+              />
+            </Route>
 
-          {/* Catch all route */}
-          <Route path='*' element={<Navigate to='/' replace />} />
-        </Routes>
-      </Router>
-    </ConfigProvider>
+            {/* Catch all route */}
+            <Route path='*' element={<Navigate to='/' replace />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </LocalizationProvider>
   );
 }
 

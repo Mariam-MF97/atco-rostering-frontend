@@ -1,0 +1,29 @@
+.icon-button {
+  background-color: #515b92 !important; /* Light mode color */
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  box-shadow: none !important;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .icon-button {
+    background-color: #cfb1ff !important;
+  }
+}
+
+.icon-button:hover {
+  background-color: #17395a !important;
+  box-shadow: none !important;
+}
+
+.icon-button.Mui-disabled {
+  background-color: #ccc !important;
+  color: #fff !important;
+}

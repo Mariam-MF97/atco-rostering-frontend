@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { theme as antdTheme } from 'antd';
 
 const useThemeStore = create(
   persist(

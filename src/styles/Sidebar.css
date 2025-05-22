@@ -1,0 +1,135 @@
+.sidebar-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar-drawer {
+  background: #181920;
+  color: #e6e6ea;
+  border-right: none;
+  width: 280px;
+  min-width: 64px;
+  transition: width 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+.sidebar-branding {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-ts-logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  background: #7c6ee6;
+  border-radius: 8px;
+  padding: 4px 10px;
+  letter-spacing: 1px;
+}
+
+.sidebar-app-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sidebar-list {
+  flex: 1;
+  padding-top: 0;
+}
+
+.sidebar-section-header {
+  font-weight: bold;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.sidebar-section {
+  margin-top: 10px;
+}
+
+.sidebar-item {
+  border-radius: 8px;
+  margin: 4px 8px;
+  padding: 0 8px;
+  color: #e6e6ea;
+  transition: background 0.2s;
+}
+
+.sidebar-item.selected {
+  background: linear-gradient(90deg, #bbaaff 0%, #a18aff 100%);
+  color: #2d2346;
+  font-weight: bold;
+}
+
+.sidebar-icon {
+  min-width: 0;
+  margin-right: 16px;
+  color: inherit;
+}
+
+.sidebar-arrow {
+  margin-left: auto;
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+}
+.sidebar-arrow.open {
+  transform: rotate(180deg);
+}
+
+.sidebar-sublist {
+  margin-left: 24px;
+  margin-bottom: 8px;
+}
+
+.sidebar-subitem {
+  border-radius: 20px;
+  margin: 2px 0;
+  padding: 0 16px;
+  color: #e6e6ea;
+  font-size: 0.97rem;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-subitem.selected {
+  background: linear-gradient(90deg, #bbaaff 0%, #a18aff 100%);
+  color: #2d2346;
+  font-weight: bold;
+}
+
+.sidebar-dot {
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: #bbaaff;
+}
+
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  width: 100%;
+  border-top: 1px solid #23233a;
+  background: #181920;
+}
+
+.sidebar-sans-logo {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e6e6ea;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}

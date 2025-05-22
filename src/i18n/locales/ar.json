@@ -84,5 +84,15 @@
   "shifts": {
     "listComingSoon": "قائمة الورديات (قريبا)",
     "createNewShift": "إنشاء وردية جديدة"
+  },
+  "sidebar": {
+    "planning": "التخطيط",
+    "shifts": "الورديات",
+    "shiftsPatterns": "أنماط الورديات",
+    "workingRules": "قواعد العمل",
+    "mprCoverage": "التغطية وMPR",
+    "rostering": "الجدولة",
+    "resources": "الموارد",
+    "configurations": "الإعدادات"
   }
 }

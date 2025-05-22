@@ -1,66 +1,94 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Dropdown, Space } from 'antd';
-import { GlobalOutlined, CheckOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Box,
+} from '@mui/material';
+import {
+  Language as LanguageIcon,
+  Check as CheckIcon,
+} from '@mui/icons-material';
 
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
- const changeLanguage = (lng) => {
-   i18n.changeLanguage(lng);
-   localStorage.setItem('i18nextLng', lng); 
-   document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
-   document.documentElement.lang = lng;
- };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  const items = [
-    {
-      key: 'en',
-      label: (
-        <Space>
-          <span>🇺🇸</span>
-          <span>English</span>
-          {i18n.language === 'en' && (
-            <CheckOutlined style={{ color: '#1890ff' }} />
-          )}
-        </Space>
-      ),
-      onClick: () => changeLanguage('en'),
-    },
-    {
-      key: 'ar',
-      label: (
-        <Space>
-          <span>🇸🇦</span>
-          <span>العربية</span>
-          {i18n.language === 'ar' && (
-            <CheckOutlined style={{ color: '#1890ff' }} />
-          )}
-        </Space>
-      ),
-      onClick: () => changeLanguage('ar'),
-    },
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('i18nextLng', lng);
+    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lng;
+    handleClose();
+  };
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
   ];
 
-  const menuProps = { items };
-
-  const currentFlag = i18n.language === 'ar' ? '🇸🇦' : '🇺🇸';
+  const currentLanguage =
+    languages.find((lang) => lang.code === i18n.language) || languages[0];
 
   return (
-    <Dropdown menu={menuProps} placement='bottomRight'>
+    <>
       <Button
-        type='text'
-        style={{
+        onClick={handleClick}
+        startIcon={<LanguageIcon />}
+        sx={{
+          color: 'inherit',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '4px 12px',
+          gap: 1,
+          px: 2,
         }}
       >
-        <GlobalOutlined />
-        <span>{currentFlag}</span>
+        <Box component='span'>{currentLanguage.flag}</Box>
       </Button>
-    </Dropdown>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        {languages.map((lang) => (
+          <MenuItem
+            key={lang.code}
+            onClick={() => changeLanguage(lang.code)}
+            selected={i18n.language === lang.code}
+          >
+            <ListItemIcon>
+              <Box component='span' sx={{ fontSize: '1.2rem' }}>
+                {lang.flag}
+              </Box>
+            </ListItemIcon>
+            <ListItemText>{lang.name}</ListItemText>
+            {i18n.language === lang.code && (
+              <CheckIcon color='primary' sx={{ ml: 1 }} />
+            )}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
   );
 };
 

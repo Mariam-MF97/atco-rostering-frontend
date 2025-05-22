@@ -1,6 +1,22 @@
 import React from 'react';
-import { Form, Input, Button, Card, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import {
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
+  InputAdornment,
+  IconButton,
+  Alert,
+  Snackbar,
+} from '@mui/material';
+import {
+  Person as PersonIcon,
+  Lock as LockIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+} from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -12,6 +28,12 @@ const Login = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const login = useAuthStore((state) => state.login);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [snackbar, setSnackbar] = React.useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   const schema = yup.object().shape({
     email: yup
@@ -41,85 +63,135 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Accept any email and password combination
       login(
         { name: data.email.split('@')[0], email: data.email },
         'mock-jwt-token'
       );
-      message.success(t('common.loginSuccess'));
+      setSnackbar({
+        open: true,
+        message: t('common.loginSuccess'),
+        severity: 'success',
+      });
       navigate('/');
     } catch (error) {
-      message.error(t('common.loginError'));
+      setSnackbar({
+        open: true,
+        message: t('common.loginError'),
+        severity: 'error',
+      });
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         minHeight: '100vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: '#f0f2f5',
+        bgcolor: 'background.default',
       }}
     >
-      <Card style={{ width: 400, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: 24 }}>
-          {t('common.login')}
-        </h2>
-        <Form layout='vertical' onFinish={handleSubmit(onSubmit)}>
-          <Form.Item
-            label={t('common.email')}
-            validateStatus={errors.email ? 'error' : ''}
-            help={errors.email?.message}
-          >
+      <Card sx={{ width: 400, boxShadow: 3 }}>
+        <CardContent sx={{ p: 4 }}>
+          <Typography variant='h5' component='h1' align='center' gutterBottom>
+            {t('common.login')}
+          </Typography>
+          <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
             <Controller
               name='email'
               control={control}
               render={({ field }) => (
-                <Input
+                <TextField
                   {...field}
-                  prefix={<UserOutlined />}
-                  placeholder={t('common.enterEmail')}
-                  size='large'
+                  margin='normal'
+                  required
+                  fullWidth
+                  label={t('common.email')}
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <PersonIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               )}
             />
-          </Form.Item>
 
-          <Form.Item
-            label={t('common.password')}
-            validateStatus={errors.password ? 'error' : ''}
-            help={errors.password?.message}
-          >
             <Controller
               name='password'
               control={control}
               render={({ field }) => (
-                <Input.Password
+                <TextField
                   {...field}
-                  prefix={<LockOutlined />}
-                  placeholder={t('common.enterPassword')}
-                  size='large'
+                  margin='normal'
+                  required
+                  fullWidth
+                  label={t('common.password')}
+                  type={showPassword ? 'text' : 'password'}
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <LockIcon />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge='end'
+                        >
+                          {showPassword ? (
+                            <VisibilityOffIcon />
+                          ) : (
+                            <VisibilityIcon />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               )}
             />
-          </Form.Item>
 
-          <Form.Item>
             <Button
-              type='primary'
-              htmlType='submit'
+              type='submit'
+              fullWidth
+              variant='contained'
               size='large'
-              block
-              loading={isSubmitting}
+              disabled={isSubmitting}
+              sx={{ mt: 3, mb: 2 }}
             >
               {t('common.login')}
             </Button>
-          </Form.Item>
-        </Form>
+          </Box>
+        </CardContent>
       </Card>
-    </div>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 

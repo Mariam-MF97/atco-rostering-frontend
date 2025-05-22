@@ -1,24 +1,49 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
-  Input,
-  TimePicker,
+  Box,
+  TextField,
+  FormControl,
+  FormLabel,
+  FormHelperText,
   Switch,
+  FormControlLabel,
   Select,
-  InputNumber,
+  MenuItem,
   Button,
-  Space,
-  Form,
-} from 'antd';
-import { SaveOutlined } from '@ant-design/icons';
+  Stack,
+  Typography,
+  Paper,
+} from '@mui/material';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { Save as SaveIcon } from '@mui/icons-material';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 
-const { Option } = Select;
-
-const ColorInput = (props) => (
-  <Input type='color' style={{ width: 100 }} {...props} />
+const ColorInput = React.forwardRef(
+  ({ value, onChange, error, helperText, label }, ref) => (
+    <TextField
+      ref={ref}
+      type='color'
+      value={value}
+      onChange={onChange}
+      error={error}
+      helperText={helperText}
+      label={label}
+      sx={{ width: 100 }}
+      InputProps={{
+        sx: {
+          padding: 0,
+          '& input': {
+            padding: '8px',
+          },
+        },
+      }}
+    />
+  )
 );
+
+ColorInput.displayName = 'ColorInput';
 
 const ShiftForm = () => {
   const { t } = useTranslation();
@@ -65,20 +90,13 @@ const ShiftForm = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: 32 }}>
-      <Form
-        layout='vertical'
-        style={{ maxWidth: 800, margin: '0 auto' }}
-        onFinish={handleSubmit(onSubmit)}
-        component='form'
-      >
-        <h2 style={{ marginBottom: 24 }}>{t('shiftForm.shiftForm')}</h2>
+    <Paper sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
+      <Typography variant='h5' component='h2' gutterBottom>
+        {t('shiftForm.shiftForm')}
+      </Typography>
 
-        <Form.Item
-          label={t('shiftForm.name')}
-          validateStatus={errors.name ? 'error' : ''}
-          help={errors.name?.message}
-        >
+      <Box component='form' onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Stack spacing={3}>
           <Controller
             name='name'
             control={control}
@@ -90,16 +108,16 @@ const ShiftForm = () => {
               },
             }}
             render={({ field }) => (
-              <Input {...field} placeholder={t('shiftForm.namePlaceholder')} />
+              <TextField
+                {...field}
+                label={t('shiftForm.name')}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+                placeholder={t('shiftForm.namePlaceholder')}
+              />
             )}
           />
-        </Form.Item>
 
-        <Form.Item
-          label={t('shiftForm.displayName')}
-          validateStatus={errors.displayName ? 'error' : ''}
-          help={errors.displayName?.message}
-        >
           <Controller
             name='displayName'
             control={control}
@@ -111,21 +129,18 @@ const ShiftForm = () => {
               },
             }}
             render={({ field }) => (
-              <Input
+              <TextField
                 {...field}
+                label={t('shiftForm.displayName')}
+                error={!!errors.displayName}
+                helperText={errors.displayName?.message}
                 placeholder={t('shiftForm.displayNamePlaceholder')}
-                maxLength={5}
+                inputProps={{ maxLength: 5 }}
               />
             )}
           />
-        </Form.Item>
 
-        <Space align='baseline' style={{ marginBottom: 16 }}>
-          <Form.Item
-            label={t('shiftForm.startTime')}
-            validateStatus={errors.startTime ? 'error' : ''}
-            help={errors.startTime?.message}
-          >
+          <Stack direction='row' spacing={2}>
             <Controller
               name='startTime'
               control={control}
@@ -133,21 +148,16 @@ const ShiftForm = () => {
               render={({ field }) => (
                 <TimePicker
                   {...field}
-                  format='hh:mm A'
-                  value={field.value ? moment(field.value, 'hh:mm A') : null}
-                  onChange={(value) =>
-                    field.onChange(value ? value.format('hh:mm A') : null)
-                  }
-                  placeholder={t('shiftForm.startTimePlaceholder')}
+                  label={t('shiftForm.startTime')}
+                  slotProps={{
+                    textField: {
+                      error: !!errors.startTime,
+                      helperText: errors.startTime?.message,
+                    },
+                  }}
                 />
               )}
             />
-          </Form.Item>
-          <Form.Item
-            label={t('shiftForm.endTime')}
-            validateStatus={errors.endTime ? 'error' : ''}
-            help={errors.endTime?.message}
-          >
             <Controller
               name='endTime'
               control={control}
@@ -155,96 +165,87 @@ const ShiftForm = () => {
               render={({ field }) => (
                 <TimePicker
                   {...field}
-                  format='hh:mm A'
-                  onChange={(value) => field.onChange(value)}
-                  value={field.value}
-                  placeholder={t('shiftForm.endTimePlaceholder')}
+                  label={t('shiftForm.endTime')}
+                  slotProps={{
+                    textField: {
+                      error: !!errors.endTime,
+                      helperText: errors.endTime?.message,
+                    },
+                  }}
                 />
               )}
             />
-          </Form.Item>
-        </Space>
+          </Stack>
 
-        {shiftDuration && (
-          <div style={{ marginBottom: 24 }}>
-            {t('shiftForm.totalShiftDuration')}: {shiftDuration}
-          </div>
-        )}
+          {shiftDuration && (
+            <Typography>
+              {t('shiftForm.totalShiftDuration')}: {shiftDuration}
+            </Typography>
+          )}
 
-        <Space style={{ marginBottom: 16 }}>
-          <Form.Item
-            label={t('shiftForm.textColor')}
-            validateStatus={errors.textColor ? 'error' : ''}
-            help={errors.textColor?.message}
-          >
+          <Stack direction='row' spacing={2}>
             <Controller
               name='textColor'
               control={control}
               rules={{ required: t('shiftFormValidation.textColorRequired') }}
-              render={({ field }) => <ColorInput {...field} />}
+              render={({ field }) => (
+                <ColorInput
+                  {...field}
+                  label={t('shiftForm.textColor')}
+                  error={!!errors.textColor}
+                  helperText={errors.textColor?.message}
+                />
+              )}
             />
-          </Form.Item>
-          <Form.Item
-            label={t('shiftForm.backgroundColor')}
-            validateStatus={errors.backgroundColor ? 'error' : ''}
-            help={errors.backgroundColor?.message}
-          >
             <Controller
               name='backgroundColor'
               control={control}
               rules={{
                 required: t('shiftFormValidation.backgroundColorRequired'),
               }}
-              render={({ field }) => <ColorInput {...field} />}
+              render={({ field }) => (
+                <ColorInput
+                  {...field}
+                  label={t('shiftForm.backgroundColor')}
+                  error={!!errors.backgroundColor}
+                  helperText={errors.backgroundColor?.message}
+                />
+              )}
             />
-          </Form.Item>
-        </Space>
+          </Stack>
 
-        <Form.Item
-          label={t('shiftForm.active')}
-          validateStatus={errors.isActive ? 'error' : ''}
-          help={errors.isActive?.message}
-        >
           <Controller
             name='isActive'
             control={control}
             render={({ field }) => (
-              <Switch
-                {...field}
-                checked={field.value}
-                checkedChildren={t('shiftForm.active')}
-                unCheckedChildren={t('shiftForm.inactive')}
-                onChange={field.onChange}
+              <FormControlLabel
+                control={<Switch {...field} checked={field.value} />}
+                label={
+                  field.value ? t('shiftForm.active') : t('shiftForm.inactive')
+                }
               />
             )}
           />
-        </Form.Item>
 
-        <Form.Item
-          label={t('shiftForm.shiftType')}
-          validateStatus={errors.shiftType ? 'error' : ''}
-          help={errors.shiftType?.message}
-        >
           <Controller
             name='shiftType'
             control={control}
             rules={{ required: t('shiftFormValidation.shiftTypeRequired') }}
             render={({ field }) => (
-              <Select {...field} style={{ width: 200 }}>
-                <Option value='Working'>{t('shiftForm.working')}</Option>
-                <Option value='Off'>{t('shiftForm.off')}</Option>
-                <Option value='OnCall'>{t('shiftForm.onCall')}</Option>
-              </Select>
+              <FormControl fullWidth error={!!errors.shiftType}>
+                <FormLabel>{t('shiftForm.shiftType')}</FormLabel>
+                <Select {...field}>
+                  <MenuItem value='Working'>{t('shiftForm.working')}</MenuItem>
+                  <MenuItem value='Off'>{t('shiftForm.off')}</MenuItem>
+                  <MenuItem value='OnCall'>{t('shiftForm.onCall')}</MenuItem>
+                </Select>
+                {errors.shiftType && (
+                  <FormHelperText>{errors.shiftType.message}</FormHelperText>
+                )}
+              </FormControl>
             )}
           />
-        </Form.Item>
 
-        <Form.Item
-          label={t('shiftForm.minRestTime')}
-          extra={t('shiftForm.minRestTimeExtra')}
-          validateStatus={errors.minRestTime ? 'error' : ''}
-          help={errors.minRestTime?.message}
-        >
           <Controller
             name='minRestTime'
             control={control}
@@ -260,22 +261,19 @@ const ShiftForm = () => {
               },
             }}
             render={({ field }) => (
-              <InputNumber
+              <TextField
                 {...field}
-                min={0}
-                max={99}
-                placeholder={t('shiftForm.minRestTimePlaceholder')}
+                type='number'
+                label={t('shiftForm.minRestTime')}
+                error={!!errors.minRestTime}
+                helperText={
+                  errors.minRestTime?.message || t('shiftForm.minRestTimeExtra')
+                }
+                inputProps={{ min: 0, max: 99 }}
               />
             )}
           />
-        </Form.Item>
 
-        <Form.Item
-          label={t('shiftForm.breakTime')}
-          extra={t('shiftForm.breakTimeExtra')}
-          validateStatus={errors.breakTime ? 'error' : ''}
-          help={errors.breakTime?.message}
-        >
           <Controller
             name='breakTime'
             control={control}
@@ -291,22 +289,19 @@ const ShiftForm = () => {
               },
             }}
             render={({ field }) => (
-              <InputNumber
+              <TextField
                 {...field}
-                min={0}
-                max={99}
-                placeholder={t('shiftForm.breakTimePlaceholder')}
+                type='number'
+                label={t('shiftForm.breakTime')}
+                error={!!errors.breakTime}
+                helperText={
+                  errors.breakTime?.message || t('shiftForm.breakTimeExtra')
+                }
+                inputProps={{ min: 0, max: 99 }}
               />
             )}
           />
-        </Form.Item>
 
-        <Form.Item
-          label={t('shiftForm.maxRepetition')}
-          extra={t('shiftForm.maxRepetitionExtra')}
-          validateStatus={errors.maxRepetition ? 'error' : ''}
-          help={errors.maxRepetition?.message}
-        >
           <Controller
             name='maxRepetition'
             control={control}
@@ -318,25 +313,32 @@ const ShiftForm = () => {
               },
             }}
             render={({ field }) => (
-              <InputNumber
+              <TextField
                 {...field}
-                min={1}
-                placeholder={t('shiftForm.maxRepetitionPlaceholder')}
+                type='number'
+                label={t('shiftForm.maxRepetition')}
+                error={!!errors.maxRepetition}
+                helperText={
+                  errors.maxRepetition?.message ||
+                  t('shiftForm.maxRepetitionExtra')
+                }
+                inputProps={{ min: 1 }}
               />
             )}
           />
-        </Form.Item>
 
-        <Button
-          type='primary'
-          htmlType='submit'
-          icon={<SaveOutlined />}
-          loading={isSubmitting}
-        >
-          {t('shiftForm.saveShift')}
-        </Button>
-      </Form>
-    </div>
+          <Button
+            type='submit'
+            variant='contained'
+            startIcon={<SaveIcon />}
+            disabled={isSubmitting}
+            size='large'
+          >
+            {t('shiftForm.saveShift')}
+          </Button>
+        </Stack>
+      </Box>
+    </Paper>
   );
 };
 
